@@ -105,7 +105,11 @@
       const data = await res.json();
 
       if (!res.ok) {
-        showMessage(data.error || 'Registration failed.', 'error');
+        const supabaseMsg =
+          data?.supabaseError?.message ||
+          data?.supabaseError?.details ||
+          data?.supabaseError?.hint;
+        showMessage(supabaseMsg || data?.error || 'Registration failed.', 'error');
         return;
       }
 

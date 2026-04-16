@@ -40,7 +40,19 @@ router.post('/register', async (req, res) => {
     .single();
 
   if (error) {
-    return res.status(500).json({ error: 'Registration failed. Please try again.' });
+    console.error('Registration error:', error);
+    const supabaseError = {
+      message: error?.message,
+      details: error?.details,
+      hint: error?.hint,
+      code: error?.code
+    };
+
+    // Return more specific info so we can fix registration quickly.
+    return res.status(500).json({
+      error: supabaseError.message || supabaseError.details || supabaseError.hint || 'Registration failed. Please try again.',
+      supabaseError
+    });
   }
 
   res.status(201).json({ message: 'Account created successfully.', user });
